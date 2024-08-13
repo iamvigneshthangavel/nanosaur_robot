@@ -33,9 +33,9 @@ from rclpy.qos import QoSProfile
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Twist
 from std_msgs.msg import String
-from .motor import Motor
-from .display import Display
-from .eyes import eyes
+# from .motor import Motor
+# from .display import Display
+# from .eyes import eyes
 
 
 def euclidean_of_vectors(xyz1, xyz2):
@@ -64,7 +64,7 @@ class NanoSaur(Node):
     def __init__(self):
         super().__init__('nanosaur')
         # Initialize eyes controller
-        self.eyes = eyes(self)
+        # self.eyes = eyes(self)
         # Get rate joint_states
         self.declare_parameter("rate", 5)
         self.timer_period = 1. / float(self.get_parameter("rate").value)
@@ -87,8 +87,8 @@ class NanoSaur(Node):
         self.get_logger().info(f"Motor left: Channel {left_id} - Wheel {self.left_wheel_name}")
         self.get_logger().info(f"Motor Right: Channel {right_id} - Wheel {self.right_wheel_name}")
         # Load motors
-        self.mright = Motor(right_id, self.rpm)
-        self.mleft = Motor(left_id, self.rpm)
+        # self.mright = Motor(right_id, self.rpm)
+        # self.mleft = Motor(left_id, self.rpm)
         # Load subscriber robot_description
         self.create_subscription(
             String, 'robot_description',
@@ -138,10 +138,10 @@ class NanoSaur(Node):
 
     def drive_callback(self, msg):
         # awake displays
-        self.eyes.ping()
+        # self.eyes.ping()
         # Store linear velocity and angular velocity
         v = msg.linear.x
-        w = msg.angular.z
+        w = -1 * msg.angular.z
         # Convert linear and angular velocity to radiant motor speed
         self.get_logger().debug(f"v={v} w={w}")
         r = self.convert_speed(v, w)
@@ -159,8 +159,8 @@ class NanoSaur(Node):
         rpml = self.r[1] * 60.
         # Set to max RPM available
         self.get_logger().info(f"RPM R={rpmr} L={rpml}")
-        self.mright.set_speed(rpmr)
-        self.mleft.set_speed(rpml)
+        # self.mright.set_speed(rpmr)
+        # self.mleft.set_speed(rpml)
 
     def transform_callback(self):
         now = self.get_clock().now()
